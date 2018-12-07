@@ -21,13 +21,28 @@ url = tk.StringVar()
 e = tk.Entry(window, width=200, show=None)
 e.pack()
 
+
 # 下载功能
 def hitme():
-    url = e.get()   # 获取下载地址
-    # header = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'}
-    r = requests.get(url)
-    res = BeautifulSoup(r)
-    print(res.prettify())
+	url = e.get()   # 获取下载地址
+	r = requests.get(url).content
+	soup = BeautifulSoup(r, 'lxml')
+	# title = soup.title.string
+	img = soup.find_all('div', 'pic')
+
+	# 创建文件夹并进入
+	os.mkdir('250')
+	os.chdir('250')
+
+	num = 1
+	for i in img:
+		num += 1
+		g = i.a.img.get('src')
+		r1 = requests.get(g)
+
+		with open(str(num) + '.jpg', 'wb') as j:
+			j.write(r1.content)
+
 
 # 按钮
 b = tk.Button(window, text='开始下载', width=15, height=2, command=hitme)
